@@ -1,0 +1,38 @@
+name: Daily Auto Commit
+
+on:
+  schedule:
+    # Every day at 12:00 UTC
+    - cron: "0 12 * * *"
+
+    # Every day at 00:00 UTC (24:00)
+    - cron: "0 0 * * *"
+
+  # Allow manual runs from GitHub Actions
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Configure Git
+        run: |
+          git config user.name "Oscar Atef Granada Aboultaif"
+          git config user.email "radulate@yahoo.com"
+
+      - name: Update commit file
+        run: |
+          echo "Last automated run: $(date -u)" > last_commit.txt
+
+      - name: Commit and push
+        run: |
+          git add last_commit.txt
+          git commit -m "chore: automated daily commit $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
